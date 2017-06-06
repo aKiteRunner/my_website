@@ -1,0 +1,56 @@
+{% extends 'my_site/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    题目信息
+{% endblock %}
+
+{% block body_block %}
+<div class="container">
+<div class="col-lg-6">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="page-header" align="center">题目信息</h2>
+            <p>{{ question.question_text }}</p>
+        </div>
+    </div>
+</div>
+<div class="col-lg-6">
+    <form class="form-horizontal" role="form" id="submission_form"
+        method="post" action="{% url 'exam_submit' exam.id question.id %}">
+        {% csrf_token %}
+        {% if question.choice_set.all %}
+        <h2 class="page-header col-lg-offset-1 col-lg-10" align="center">选项</h2>
+        {% for choice in question.choice_set.all %}
+        <div class="form-group checkbox-row">
+            <div class="col-lg-offset-1 col-lg-10">
+                <div class="input-group">
+                    <span class="input-group-addon">
+                        <input id="choice_{{ forloop }}" type="checkbox" name="choice" value="{{ choice.id }}">
+                    </span>
+                    <input type="text" class="form-control" readonly value="{{ choice }}">
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <h2 class="page-header col-lg-offset-1 col-lg-10" align="center">答案</h2>
+        <div class="form-group">
+            <div class="col-lg-offset-1 col-lg-10">
+                <textarea name="answer_text" rows="4" maxlength="640" class="form-control"
+                          placeholder="一行代表一个空"></textarea>
+            </div>
+        </div>
+        {% endif %}
+        <div class="form-group">
+            <div class="col-lg-offset-3 col-lg-2">
+                <button type="submit" class="btn btn-primary">提交</button>
+            </div>
+            <div class="col-lg-offset-1 col-lg-3">
+                <a class="btn btn-info form-control" href="{% url 'exam_submission' exam.id question.id %}">提交记录</a>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

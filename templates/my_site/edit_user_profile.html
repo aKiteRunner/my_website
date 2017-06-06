@@ -1,0 +1,44 @@
+{% extends 'my_site/base.html' %}
+
+{% block title_block %}
+    修改信息
+{% endblock %}
+
+{% block body_block %}
+    <div class="container">
+        <div class="col-lg-offset-3 col-lg-6">
+            <h2 class="page-header" align="center">修改信息</h2>
+            <form class="form-horizontal col-lg-offset-1 col-lg-10" method="post" action="{% url 'edit_user_profile' %}"
+            id="user_profile_form" role="form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <span class="glyphicon glyphicon-user"></span><strong> 用户名: {{ user.username }}</strong>
+                </div>
+                <div class="form-group">
+                    <span class="glyphicon glyphicon-home"></span>
+                    <label for="id_user_school" class="control-label"> 学校:</label>
+                    <input id="id_user_school" type="text" class="form-control" name="school" placeholder="学校"
+                           value="{% if user.profile.school %}{{ user.profile.school }}{% endif %}" maxlength="24">
+                </div>
+                <div class="form-group">
+                    <span class="glyphicon glyphicon-tag"></span>
+                    <label for="id_user_student_id" class="control-label"> 学号:</label>
+                    <input id="id_user_student_id" type="text" class="form-control" name="student_id" placeholder="学号"
+                           value="{% if user.profile.student_id %}{{ user.profile.student_id }}{% endif %}" maxlength="24">
+                </div>
+                <div class="form-group">
+                    <span class="glyphicon glyphicon-comment"></span>
+                    <label for="id_user_introduction" class="control-label"> 个人简介:</label>
+                    <textarea id="id_user_introduction" name="introduction" class="form-control"
+                              rows="5" maxlength="140">{% if user.profile.introduction %}{{ user.profile.introduction }}{% endif %}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-5 col-lg-3">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

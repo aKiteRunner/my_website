@@ -1,0 +1,4 @@
+.table_td_control {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

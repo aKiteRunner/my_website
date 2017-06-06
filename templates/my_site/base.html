@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'datetimepicker/css/bootstrap-datetimepicker.min.css' %}"
+          rel="stylesheet" media="screen">
+    <link href="{% static 'css/my_css.css' %}">
+    <link rel="icon" href="{% static 'icon_small.ico' %}">
+    <script type="text/javascript" src="{% static 'js/jquery-3.2.1.min.js' %}" charset="UTF-8"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}" charset="UTF-8"></script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <title>
+        {% block title_block %}
+            My Site
+        {% endblock %}
+    </title>
+</head>
+<body>
+
+{% if messages %}
+    <div class="modal fade" id="id_errors" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><span
+                            class="glyphicon glyphicon-exclamation-sign"></span> 提示</h4>
+                </div>
+                <div class="modal-body">
+                    {% for message in messages %}
+                    {{ message }}
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+    <script>
+        $(function () {
+            $('#id_errors').modal({
+                show: true,
+                backdrop: true
+            })
+        });
+    </script>
+{% endif %}
+
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <span class="glyphicon glyphicon-home"></span>
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li role="presentation"><a href="{% url 'categories' %}">习题集列表</a></li>
+                <li role="presentation"><a href="{% url 'exams' %}">考试列表</a> </li>
+                <li role="presentation"><a href="{% url 'questions' %}">题目列表</a></li>
+                <li role="presentation"><a href="{% url 'submissions' %}">提交记录</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'show_user_profile' user.id %}">个人信息</a></li>
+                {% endif %}
+                {% if user.profile.is_administrator %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">权限管理<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li role="presentation"><a href="{% url 'add_category' %}">新建习题集</a></li>
+                            <li role="presentation">
+                                <a href="#" onclick="show_update_category_form()">修改习题集</a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li role="presentation"><a href="{% url 'add_exam' %}">新增考试</a></li>
+                            <li role="presentation"><a href="#" onclick="show_generate_exam_form()">随机试卷</a> </li>
+                            <li role="presentation">
+                                <a href="#" onclick="show_update_exam_form()">修改考试</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li role="presentation"><a href="{% url 'add_question' %}">新增题目</a></li>
+                            <li role="presentation">
+                                <a href="#" onclick="show_update_question_form()">修改题目</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li><a href="#" onclick="show_edit_user_authority()">提升权限</a> </li>
+                        </ul>
+                    </li>
+                {% else %}
+                {% endif %}
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                    <li class="navbar-text" role="presentation">你好，{{ user.username }}</li>
+                    <li><a href="{% url 'logout' %}">注销</a></li>
+                {% else %}
+                    <li class="navbar-text" role="presentation">你好，朋友</li>
+                    <li role="presentation"><a href="{% url 'login' %}">登录</a></li>
+                    <li role="presentation"><a href="{% url 'register' %}">注册</a></li>
+                {% endif %}
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+{% block body_block %}
+{% endblock %}
+
+<footer class="footer panel-footer">
+    <div class="text-center container credit">
+        <p class="muted credit">Copyright © 2017 Meng Yudong</p>
+    </div>
+</footer>
+
+<div class="modal fade" id="id_update_question_form" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">修改题目</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="id_update_question_id" class="form-control" required placeholder="Question ID">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" onclick=check_question_id()>确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="id_update_exam_form" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">修改考试</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="id_update_exam_id" class="form-control" required placeholder="Exam ID">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" onclick=check_exam_id()>确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="id_update_category_form" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">修改习题集</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="id_update_category_id" class="form-control"
+                       required placeholder="Category ID">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" onclick=check_category_id()>确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="id_edit_user_authority" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">提升权限</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="id_edit_user_authority_form" method="post"
+                action="{% url 'edit_user_authority' %}">
+                    {% csrf_token %}
+                    <input type="number" class="form-control" name="category" placeholder="Category ID">
+                    <input type="number" class="form-control" name="exam" placeholder="Exam ID">
+                    <input type="text" class="form-control" name="normal_user" placeholder="User name">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" form="id_edit_user_authority_form">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade" id="id_generate_random_exam" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">随机试卷</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="id_category_form" method="post"
+                action="{% url 'generate_exam' %}">
+                    {% csrf_token %}
+                    <input type="text" class="form-control" name="category_text" maxlength="128"
+                    required id="id_category_text" placeholder="试卷标题">
+                    <div class="input-group">
+                        <span class="input-group-addon glyphicon glyphicon-calendar"></span>
+                        <input type="datetime" class="form-control" name="start_time"
+                           required id="id_start_time" placeholder="开始时间: {% now 'Y-n-j H:i:s' %}">
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon glyphicon glyphicon-calendar"></span>
+                        <input type="datetime" class="form-control" name="end_time"
+                               required id="id_end_time" placeholder="结束时间: {% now 'Y-n-j H:i:s' %}">
+                    </div>
+                    <input type="number" class="form-control" name="count" min="1" placeholder="试题题数: 1">
+                    <input type="number" class="form-control" name="grade" min="0" placeholder="每题分值: 1">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary" form="id_category_form">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script>
+    function show_update_question_form() {
+        $('#id_update_question_form').modal({
+            show: true,
+            backdrop: true
+        })
+    }
+    function check_question_id() {
+        var input = document.getElementById("id_update_question_id");
+        window.location.href = "/question/" + input.value + "/update";
+    }
+    function show_update_category_form() {
+        $('#id_update_category_form').modal({
+            show: true,
+            backdrop: true
+        })
+    }
+    function check_category_id() {
+        var input = document.getElementById("id_update_category_id");
+        window.location.href = "/category/" + input.value + "/update";
+    }
+    if ($(document).height() <= $(window).height()) {
+        $("footer").addClass("navbar-fixed-bottom");
+    } else {
+        $("footer").removeClass("navbar-fixed-bottom");
+    }
+    function show_edit_user_authority() {
+        $('#id_edit_user_authority').modal({
+            show: true,
+            backdrop: true
+        })
+    }
+    function show_update_exam_form() {
+        $('#id_update_exam_form').modal({
+            show: true,
+            backdrop: true
+        })
+    }
+    function check_exam_id() {
+        var input = document.getElementById("id_update_exam_id");
+        window.location.href = "/exam/" + input.value + "/update";
+    }
+    function show_generate_exam_form() {
+        $('#id_generate_random_exam').modal({
+            show: true,
+            backdrop: true
+        })
+    }
+
+</script>
+
+</body>
+</html>

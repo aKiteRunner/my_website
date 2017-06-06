@@ -1,0 +1,32 @@
+{% extends 'my_site/base.html' %}
+
+{% block title_block %}
+    提交记录
+{% endblock %}
+
+{% block body_block %}
+    <div class="col-lg-offset-4 col-lg-4">
+        <div class="col-lg-12">
+            <h1 class="page-header" align="center">提交记录</h1>
+        </div>
+        <div class="form-group col-lg-offset-1 col-lg-10">
+            <textarea class="text-muted form-control" readonly rows="20">{{ submission }}</textarea>
+        </div>
+        {% if admin %}
+            <div class="form-group">
+                <form name="grade_form" class="form-horizontal" method="post"
+                      action="{% url 'edit_submission' submission.id %}">
+                    {% csrf_token %}
+                    <label for="id_grade" class="control-label col-lg-2">成绩</label>
+                    <div class="col-lg-7">
+                        <input id="id_grade" name="grade" class="form-control" required type="number"
+                               placeholder="0~100">
+                    </div>
+                    <div class="col-lg-2">
+                        <button type="submit" class="btn-primary btn form-control">确定</button>
+                    </div>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

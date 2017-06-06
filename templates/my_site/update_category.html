@@ -1,0 +1,135 @@
+{% extends 'my_site/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    修改习题集
+{% endblock %}
+
+{% block body_block %}
+
+<div class="container">
+<div class="col-lg-6">
+    <div class="col-lg-offset-1 col-lg-11">
+        <h2 class="page-header" align="center">修改习题集</h2>
+    </div>
+    <form class="form-horizontal" role="form" id="category_form"
+          method="post" action="{% url 'update_category' category.id %}">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="id_category_text" class="col-lg-offset-2 col-lg-3">习题集标题</label>
+        </div>
+
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-9">
+                <input type="text" class="form-control" name="category_text" maxlength="128" required
+                       id="id_category_text" placeholder="习题集标题" value="{{ category.category_text }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_start_time" class="col-lg-offset-2 col-lg-3">开始时间</label>
+        </div>
+
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-9">
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-calendar"></span>
+                    <input type="datetime" class="form-control" name="start_time" required id="id_start_time"
+                       placeholder="{% now 'Y-n-j H:i:s' %}"
+                       value="{{ category.start_time|date:'Y-n-j' }} {{ category.start_time|time:'H:i:s' }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="id_end_time" class="col-lg-offset-2 col-lg-3">结束时间</label>
+        </div>
+
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-9">
+                <div class="input-group">
+                    <span class="input-group-addon glyphicon glyphicon-calendar"></span>
+                    <input type="datetime" class="form-control" name="end_time" required id="id_end_time"
+                       placeholder="{% now 'Y-n-j H:i:s' %}"
+                       value="{{ category.end_time|date:'Y-n-j' }} {{ category.end_time|time:'H:i:s' }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-lg-offset-5 col-lg-2">
+                <button type="submit" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="col-lg-6">
+    <div class="col-lg-offset-1 col-lg-11" id="id_question_form">
+        <h2 class="page-header" align="center">题目列表</h2>
+        <div class="col-lg-12 form-group">
+            <div class="col-lg-offset-2 col-lg-2">
+                <button type="button" onclick="add_question()" class="btn btn-info">添加</button>
+            </div>
+            <div class="col-lg-offset-3 col-lg-2">
+                <button type="button" onclick="delete_question()" class="btn btn-danger">删除</button>
+            </div>
+        </div>
+        {% for question in questions %}
+        <div class="form-group" id="out_div{{ forloop.counter0 }}">
+        <div class="col-lg-offset-1 col-lg-10">
+            <input id="id_question_text0" name="question_id" required maxlength="12" type="number"
+            form="category_form" class="form-control" placeholder="题目序号" value="{{ question.id }}">
+        </div>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+</div>
+<script>
+var id = document.getElementById("id_question_form").childElementCount - 2;
+function add_question() {
+    var form = "category_form";
+    var container = document.getElementById("id_question_form");
+    var input_text = document.createElement("input");
+    var out_div = document.createElement("div");
+    var input_div = document.createElement("div");
+
+    input_text.id = "id_question_text" + id;
+    input_text.name = "question_id";
+    input_text.required = true;
+    input_text.setAttribute("maxlength", "12");
+    input_text.setAttribute("type", "number");
+    input_text.setAttribute("form", form);
+    input_text.setAttribute("class", "form-control");
+    input_text.setAttribute("placeholder", "题目序号");
+
+    out_div.setAttribute("class", "form-group");
+    out_div.setAttribute("id", "out_div" + id);
+    input_div.setAttribute("class", "col-lg-offset-1 col-lg-10");
+
+    input_div.appendChild(input_text);
+    out_div.appendChild(input_div);
+    container.appendChild(out_div);
+
+    id += 1;
+
+    if ($(document).height() <= $(window).height()) {
+        $("footer").addClass("navbar-fixed-bottom");
+    } else {
+        $("footer").removeClass("navbar-fixed-bottom");
+    }
+}
+function delete_question() {
+    var out_div = document.getElementById("out_div" + (id - 1));
+    out_div.parentNode.removeChild(out_div);
+    id -= 1;
+    if ($(document).height() <= $(window).height()) {
+        $("footer").addClass("navbar-fixed-bottom");
+    } else {
+        $("footer").removeClass("navbar-fixed-bottom");
+    }
+}
+</script>
+{% endblock %}

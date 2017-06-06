@@ -1,0 +1,8 @@
+Environment:
+- Python 3.6.0
+- Django 1.11
+
+1. python ~/my_website/manage.py makemigrations
+2. python ~/my_website/manage.py migrate
+3. python ~/my_website/manage.py runserver
+4. open url localhost:8000/index in your brower

@@ -1,0 +1,60 @@
+{% extends 'my_site/base.html' %}
+
+{% block title_block %}
+    个人信息
+{% endblock %}
+
+{% block body_block %}
+    <div class="container">
+        <div class="col-lg-offset-3 col-lg-6">
+            <h2 class="page-header" align="center">个人信息</h2>
+            <div class="row">
+                <div class="col-lg-offset-1 col-lg-10">
+                    <div class="row">
+                        <p>
+                            <span class="glyphicon glyphicon-user"></span>
+                            <strong> 用户名: {{ show_user.username }}</strong>
+                        </p>
+                    </div>
+                    <div class="row">
+                        <p>
+                            <span class="glyphicon glyphicon-home"></span><strong>
+                            学校: {% if show_user.profile.school %}
+                            {{ show_user.profile.school }}
+                            {% endif %}</strong>
+                        </p>
+                    </div>
+                    <div class="row">
+                        <p>
+                            <span class="glyphicon glyphicon-tag"></span><strong>
+                            学号: {% if show_user.profile.student_id %}
+                            {{ show_user.profile.student_id }}
+                            {% endif %}</strong>
+                        </p>
+                    </div>
+                    <div class="row">
+                        <p>
+                            <span class="glyphicon glyphicon-comment"></span><strong> 个人简介:</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-lg-offset-1 col-lg-10">
+                    <textarea class="text-muted form-control" readonly
+                              rows="5">{% if show_user.profile.introduction %}{{ show_user.profile.introduction }}{% endif %}</textarea>
+                </div>
+            </div>
+            {% ifequal show_user.id user.id %}
+            <div class="form-group">
+                <div class="col-lg-offset-3 col-lg-2">
+                    <a class="btn btn-primary" href="{% url 'edit_user_profile' %}">修改信息</a>
+                </div>
+                <div class="col-lg-offset-2 col-lg-2">
+                    <a class="btn btn-default" href="{% url 'edit_user_password' %}">修改密码</a>
+                </div>
+            </div>
+            {% endifequal %}
+        </div>
+    </div>
+{% endblock %}

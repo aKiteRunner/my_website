@@ -1,0 +1,150 @@
+{% extends 'my_site/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    修改题目
+{% endblock %}
+
+{% block body_block %}
+
+    <div class="container">
+        <div class="col-lg-6">
+            <div class="col-lg-offset-1 col-lg-11">
+                <h2 class="page-header" align="center">修改题目</h2>
+            </div>
+            <form class="form-horizontal" role="form" id="question_form"
+                  method="post" action="{% url 'update_question' question.id %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_question_text" class="col-lg-offset-2 col-lg-3">
+                        题目描述</label>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-9">
+                    <textarea class="form-control" name="question_text" maxlength="384"
+                      required id="id_question_text" rows="5"
+                              placeholder="题目描述">{{ question.question_text }}</textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_explanation" class="col-lg-offset-2 col-lg-3">
+                        题目答案</label>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-9">
+                    <textarea class="form-control" name="explanation" maxlength="384"
+                      id="id_explanation" rows="5" placeholder="一行代表一个空"
+                    >{% if question.explanation %}{{ question.explanation }}{% endif %}</textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-lg-offset-5 col-lg-2">
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-6">
+            <div class="col-lg-offset-1 col-lg-11" id="id_choice_form">
+                <h3 class="page-header" align="center">选项</h3>
+
+                <div class="col-lg-12 form-group">
+                    <div class="col-lg-offset-2 col-lg-2">
+                        <button type="button" onclick="add_choice()" class="btn btn-info">添加</button>
+                    </div>
+                    <div class="col-lg-offset-3 col-lg-2">
+                        <button type="button" onclick="delete_choice()" class="btn btn-danger">删除</button>
+                    </div>
+                </div>
+
+                {% for choice in choices %}
+                <div class="form-group" id="out_div{{ forloop.counter0 }}">
+                <div class="col-lg-12">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <input id="id_is_correct{{ forloop.counter0 }}" name="is_correct" value="{{ forloop.counter0 }}"
+                            type="checkbox" {% if choice.is_correct %} checked {% endif %}
+                                   form="question_form">
+                        </span>
+                        <input id="id_choice_text{{ forloop.counter0 }}" name="choice_text" required
+                        maxlength="256" type="text" form="question_form" class="form-control"
+                        placeholder="Check the choice if it is correct" value="{{ choice.choice_text }}">
+                    </div>
+                </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        var id = document.getElementById("id_choice_form").childElementCount - 2;
+        function add_choice() {
+            var form = "question_form";
+            var container = document.getElementById("id_choice_form");
+            var button = document.getElementById("id_button_submit");
+            var label1 = document.createElement("label");
+            var label2 = document.createElement("label");
+            var input_text = document.createElement("input");
+            var checkbox = document.createElement("input");
+            var out_div = document.createElement("div");
+            var input_div = document.createElement("div");
+            var input_group = document.createElement("div");
+            var checkbox_span = document.createElement("span");
+
+            input_text.id = "id_choice_text" + id;
+            input_text.name = "choice_text";
+            input_text.required = true;
+            input_text.setAttribute("maxlength", "256");
+            input_text.setAttribute("type", "text");
+            input_text.setAttribute("form", form);
+            input_text.setAttribute("class", "form-control");
+            input_text.setAttribute("placeholder", "请勾选正确答案");
+
+            label1.setAttribute("for", input_text.id);
+            label1.innerText = "Choice:";
+            label1.setAttribute("class", "col-lg-2 control-label");
+
+            checkbox.id = "id_is_correct" + id;
+            checkbox.name = "is_correct";
+            checkbox.setAttribute("value", id);
+            checkbox.setAttribute("type", "checkbox");
+            checkbox.setAttribute("form", form);
+
+            checkbox_span.setAttribute("class", "input-group-addon");
+
+            out_div.setAttribute("class", "form-group");
+            out_div.setAttribute("id", "out_div" + id);
+            input_group.setAttribute("class", "input-group");
+            input_div.setAttribute("class", "col-lg-12");
+
+            checkbox_span.appendChild(checkbox);
+            input_group.appendChild(checkbox_span);
+            input_group.appendChild(input_text);
+            input_div.appendChild(input_group);
+            out_div.appendChild(input_div);
+
+            container.appendChild(out_div);
+            id += 1;
+            if ($(document).height() <= $(window).height()) {
+                $("footer").addClass("navbar-fixed-bottom");
+            } else {
+                $("footer").removeClass("navbar-fixed-bottom");
+            }
+        }
+        function delete_choice() {
+            var out_div = document.getElementById("out_div" + (id - 1));
+            out_div.parentNode.removeChild(out_div);
+            id -= 1;
+            if ($(document).height() <= $(window).height()) {
+                $("footer").addClass("navbar-fixed-bottom");
+            } else {
+                $("footer").removeClass("navbar-fixed-bottom");
+            }
+        }
+    </script>
+{% endblock %}
