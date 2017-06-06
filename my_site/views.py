@@ -111,10 +111,13 @@ def edit_user_authority(request):
         # Parse form
         try:
             normal_user_name = request.POST['normal_user'].strip()
-            category_id = int(request.POST['category'], None)
-            exam_id = int(request.POST['exam'], None)
+            category_id = request.POST['category']
+            exam_id = request.POST['exam']
+            if category_id:
+                category_id = int(category_id)
+            if exam_id:
+                exam_id = int(exam_id)
             normal_user = User.objects.get(username=normal_user_name)
-
             if category_id:
                 category = Category.objects.get(pk=category_id)
                 if category_update_check(user, category):
@@ -137,6 +140,7 @@ def edit_user_authority(request):
                     exam.save()
         except (KeyError, ObjectDoesNotExist, ValueError):
             messages.error(request, '输入不合法')
+        messages.info(request, '操作成功')
     return render(request, 'my_site/index.html', context)
 
 
