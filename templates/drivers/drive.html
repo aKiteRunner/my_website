@@ -1,0 +1,59 @@
+{% extends 'my_site/base.html' %}
+
+{% block title_block %}
+Drag racing
+{% endblock %}
+
+{% block body_block %}
+<div class="container">
+    <div class="table-responsive panel panel-primary">
+        <div class="panel-heading">Movie List</div>
+        <div class="panel-body">
+            <p>There are so many drivers.</p>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Movie</th>
+                <th>Number</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if movies %}
+                {% for movie in movies %}
+                    <tr>
+                        <td>
+                            <a href="{{ movie.movie_url }}">{{ forloop.counter}}</a>
+                        </td>
+                        <td>
+                            <a href="{{ movie.movie_url }}">{{ movie.abbreviated_title }}</a>
+                        </td>
+                        <td><a href="{{ movie.image_url }}">{{ movie.number }}</a></td>
+                        <td>{{ movie.date|date:'Y-n-j' }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li>
+                    <a href="?page={{ pre_page }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% for page in pages %}
+                <li><a href="?page={{ page }}">{{ page }}</a></li>
+                {% endfor %}
+                <li>
+                    <a href="?page={{ next_page }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
