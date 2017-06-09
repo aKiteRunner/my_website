@@ -111,10 +111,10 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if user.is_authenticated %}
-                    <li class="navbar-text" role="presentation">你好，{{ user.username }}</li>
+                    <li role="presentation"><a href="{% url 'show_user_profile' user.id %}">你好，{{ user.username }}</a> </li>
                     <li><a href="{% url 'logout' %}">注销</a></li>
                 {% else %}
-                    <li class="navbar-text" role="presentation">你好，朋友</li>
+                    <li role="presentation"><a href="#">你好，朋友</a> </li>
                     <li role="presentation"><a href="{% url 'login' %}">登录</a></li>
                     <li role="presentation"><a href="{% url 'register' %}">注册</a></li>
                 {% endif %}
