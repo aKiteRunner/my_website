@@ -1098,7 +1098,8 @@ def show_exam_rank(request, exam_id):
             try:
                 _ = user_grade[(user_name, question_id)]
             except KeyError:
-                user_grade[(user_name, question_id)] = submission_grade
+                if exam.start_time <= submission.submitted_date <= exam.end_time:
+                    user_grade[(user_name, question_id)] = submission_grade
     else:
         for submission in exam.examsubmission_set.filter(user=user.id):
             question_id = submission.question_id
@@ -1107,7 +1108,8 @@ def show_exam_rank(request, exam_id):
             try:
                 _ = user_grade[(user_name, question_id)]
             except KeyError:
-                user_grade[(user_name, question_id)] = submission_grade
+                if exam.start_time <= submission.submitted_date <= exam.end_time:
+                    user_grade[(user_name, question_id)] = submission_grade
     grades = defaultdict(lambda: 0)
     for (u, q), g in user_grade.items():
         grades[u] += g
