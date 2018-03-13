@@ -80,8 +80,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'web',
-        'USER': 'mdd',
-        'PASSWORD': 'm123456',
+        'USER': 'xxx',
+        'PASSWORD': 'xxx',
         'HOST': 'localhost',
         'DEFAULT-CHARACTER-SET': 'utf8'
     }
